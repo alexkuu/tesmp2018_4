@@ -6,12 +6,14 @@ import io.searchbox.client.JestClient
 import io.searchbox.client.JestResult
 import io.searchbox.core.Bulk
 import io.searchbox.core.BulkResult
+import io.searchbox.core.Count
 import io.searchbox.core.Delete
 import io.searchbox.core.Index
 import io.searchbox.core.Search
 import io.searchbox.indices.CreateIndex
 import io.searchbox.indices.IndicesExists
 import io.searchbox.indices.aliases.GetAliases
+import org.json.JSONObject
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -86,6 +88,45 @@ class Repository {
         if (result.isSucceeded()) {
             return result.jsonString
         } else {
+            return result.errorMessage
+        }
+    }
+
+    String getPosts(String indexName, String type) {
+        log.info("Getting posts from index: " + indexName + " type: " + type)
+        JestResult result = client.execute(new Search.Builder().addIndex(indexName).addType(type).build())
+        if (result.isSucceeded()) {
+            log.info(result.getJsonString())
+            return result.getJsonString()
+        } else {
+            log.info(result.getErrorMessage())
+            return result.errorMessage
+        }
+    }
+
+    String getCount(String indexName, String type) {
+        log.info("Getting count from index: " + indexName + " type: " + type)
+        JestResult result = client.execute(new Count.Builder().addIndex(indexName).addType(type).build())
+        if (result.isSucceeded()) {
+            log.info(result.getJsonString())
+            JSONObject object = new JSONObject(result.getJsonString())
+            return object.get("count")
+        } else {
+            log.info(result.getErrorMessage())
+            return result.errorMessage
+        }
+    }
+
+    String getAggregationJsonByField(String indexName, String typeName, String fieldName) {
+        log.info("Get aggr using index:[" + indexName + "]/type:[" + typeName + "]/field:[" + fieldName + "]")
+        String query = "{\"aggs\": {\"all_" + fieldName + "\": {\"terms\": { \"field\": \"" + fieldName + "\" }}}}";
+        log.info("QUERY: [" + query + "]")
+        JestResult result = client.execute(new Search.Builder(query).addIndex(indexName).addType(typeName).build())
+        if (result.isSucceeded()) {
+            log.info(result.jsonString)
+            return result.getJsonObject().get("aggregations")
+        } else {
+            log.info(result.errorMessage)
             return result.errorMessage
         }
     }

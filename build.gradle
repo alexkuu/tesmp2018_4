@@ -32,6 +32,7 @@ dependencies {
     compile 'io.searchbox:jest:2.0.4'
     compile 'io.gsonfire:gson-fire:1.8.2'
     compile group: 'log4j', name: 'log4j', version: '1.2.17'
+    compile group: 'org.json', name: 'json', version: '20180130'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.0.0.RELEASE'
     testCompile group: 'org.testng', name: 'testng', version: '6.14.2'
 

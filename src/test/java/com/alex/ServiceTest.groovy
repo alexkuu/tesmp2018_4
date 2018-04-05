@@ -4,11 +4,14 @@ import com.alex.app.entities.Post
 import com.alex.app.loader.App
 import com.alex.app.repository.Repository
 import com.alex.app.services.Logger
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests
 import org.testng.Assert
 import org.testng.annotations.Test
+
+import java.util.concurrent.ThreadLocalRandom
 
 @SpringBootTest(classes = App, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class ServiceTest extends AbstractTestNGSpringContextTests {
@@ -95,6 +98,59 @@ class ServiceTest extends AbstractTestNGSpringContextTests {
         Assert.assertTrue(resp.contains("\"_type\":\"" + type + "\""))
         Assert.assertTrue(resp.contains("\"_version\":1"))
         Assert.assertTrue(resp.contains("\"status\":201"))
+        repository.deleteAll()
+    }
+
+    @Test(description = "Aggr doc_count test")
+    void docCountTest() {
+        repository.deleteAll()
+        log.info("Aggr doc_count test")
+        int minCount = 1;
+        int maxCount = 20;
+        String index = "alextest"
+        String type = "post"
+        String firstTitle = "Music"
+        String secondTitle = "Movie"
+        String thirdTitle = "Theater"
+        String body = "Test post body. Body of the test post"
+        String date = "01-02-2005"
+        int fisrtRandom = ThreadLocalRandom.current().nextInt(minCount, maxCount + 1)
+        int secondRandom = ThreadLocalRandom.current().nextInt(minCount, maxCount + 1)
+        int thirdRandom = ThreadLocalRandom.current().nextInt(minCount, maxCount + 1)
+        for (int i = 0; i < fisrtRandom; i++) {
+            Post post = new Post(index, type, firstTitle, body + i, date + i)
+            String resp = repository.putPost(post)
+            log.info(resp)
+        }
+
+        for (int i = 0; i < secondRandom; i++) {
+            Post post = new Post(index, type, secondTitle, body + i, date + i)
+            String resp = repository.putPost(post)
+            log.info(resp)
+        }
+
+        for (int i = 0; i < thirdRandom; i++) {
+            Post post = new Post(index, type, thirdTitle, body + i, date + i)
+            String resp = repository.putPost(post)
+            log.info(resp)
+        }
+        Thread.sleep(5000)
+        String request = "getaggregation/" + index + "/" + type + "/title"
+        String response = repository.getAggregationJsonByField(index, type, "title")
+        HashMap<String, HashMap<String, Object>> result =
+                new ObjectMapper().readValue(response, HashMap.class)
+        HashMap<String, Object> allFields = result.get("all_title")
+        List<HashMap<String, String>> buckets = allFields.get("buckets")
+        Assert.assertEquals(buckets.size(), 3)
+        for (HashMap<String, String> bucket : buckets) {
+            if (bucket.get("key").equals(firstTitle.toLowerCase())) {
+                Assert.assertEquals(bucket.get("doc_count"), fisrtRandom)
+            } else if (bucket.get("key").equals(secondTitle.toLowerCase())) {
+                Assert.assertEquals(bucket.get("doc_count"), secondRandom)
+            } else {
+                Assert.assertEquals(bucket.get("doc_count"), thirdRandom)
+            }
+        }
         repository.deleteAll()
     }
 

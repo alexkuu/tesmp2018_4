@@ -50,4 +50,20 @@ class ElasticSearchController {
         return repository.putPost(post)
     }
 
+    @RequestMapping("search/{index}/{type}")
+    String searchPostsInIndex(@PathVariable String index, @PathVariable String type) {
+        return repository.getPosts(index, type)
+    }
+
+    @RequestMapping("count/{index}/{type}")
+    String countPostsInIndex(@PathVariable String index, @PathVariable String type) {
+        return repository.getCount(index, type)
+    }
+
+    @RequestMapping("getaggregation/{index}/{type}/{field}")
+    String getAggregationJsonByField(
+            @PathVariable String index, @PathVariable String type, @PathVariable String field) {
+        return repository.getAggregationJsonByField(index, type, field)
+    }
+
 }
