@@ -1,0 +1,38 @@
+group 'testak3'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.0.RELEASE")
+    }
+}
+
+apply plugin: 'groovy'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+bootJar {
+    baseName = 'gs-spring-boot'
+    version = '0.1.0'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy:2.3.11'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-parent', version: '2.0.0.RELEASE', ext: 'pom'
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-elasticsearch', version: '2.0.0.RELEASE'
+    compile 'io.searchbox:jest:2.0.4'
+    compile 'io.gsonfire:gson-fire:1.8.2'
+    compile group: 'log4j', name: 'log4j', version: '1.2.17'
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.0.0.RELEASE'
+    testCompile group: 'org.testng', name: 'testng', version: '6.14.2'
+
+}
