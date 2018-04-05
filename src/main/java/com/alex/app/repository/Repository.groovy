@@ -50,31 +50,31 @@ class Repository {
         log.info("Check index exist: " + name)
         IndicesExists indicesExists = new IndicesExists.Builder(name).build()
         JestResult existsResult = client.execute(indicesExists)
-        return existsResult.isSucceeded()
+        existsResult.isSucceeded()
     }
 
     String getAliases() {
         log.info("Get aliases")
         JestResult result = client.execute(new GetAliases.Builder().build())
-        return result.getJsonString()
+        result.getJsonString()
     }
 
     String getAll() {
         log.info("get all")
         JestResult result = client.execute(new Search.Builder().build())
-        return result.getJsonString()
+        result.getJsonString()
     }
 
     String createIndex(String name) {
         log.info("Create index: " + name)
         if (indexExist(name)) {
-            return "Index " + name + " already exist"
+            "Index " + name + " already exist"
         } else {
             JestResult result = client.execute(new CreateIndex.Builder(name).build())
             if (result.isSucceeded()) {
-                return "Index " + name + " created"
+                "Index " + name + " created"
             } else {
-                return result.errorMessage
+                result.errorMessage
             }
         }
     }
@@ -86,9 +86,9 @@ class Repository {
         Bulk bulk = new Bulk.Builder().defaultIndex(post.index).defaultType(post.type).addAction(new Index.Builder(post.source).build()).build()
         BulkResult result = client.execute(bulk)
         if (result.isSucceeded()) {
-            return result.jsonString
+            result.jsonString
         } else {
-            return result.errorMessage
+            result.errorMessage
         }
     }
 
@@ -97,10 +97,10 @@ class Repository {
         JestResult result = client.execute(new Search.Builder().addIndex(indexName).addType(type).build())
         if (result.isSucceeded()) {
             log.info(result.getJsonString())
-            return result.getJsonString()
+            result.getJsonString()
         } else {
             log.info(result.getErrorMessage())
-            return result.errorMessage
+            result.errorMessage
         }
     }
 
@@ -110,10 +110,10 @@ class Repository {
         if (result.isSucceeded()) {
             log.info(result.getJsonString())
             JSONObject object = new JSONObject(result.getJsonString())
-            return object.get("count")
+            object.get("count")
         } else {
             log.info(result.getErrorMessage())
-            return result.errorMessage
+            result.errorMessage
         }
     }
 
@@ -124,10 +124,10 @@ class Repository {
         JestResult result = client.execute(new Search.Builder(query).addIndex(indexName).addType(typeName).build())
         if (result.isSucceeded()) {
             log.info(result.jsonString)
-            return result.getJsonObject().get("aggregations")
+            result.getJsonObject().get("aggregations")
         } else {
             log.info(result.errorMessage)
-            return result.errorMessage
+            result.errorMessage
         }
     }
 

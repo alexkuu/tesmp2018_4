@@ -32,11 +32,11 @@ class Post {
     }
 
     JsonObject getSource() {
-        return source
+        source
     }
 
     String getIndex() {
-        return index
+        index
     }
 
     void setIndex(String index) {
@@ -44,7 +44,7 @@ class Post {
     }
 
     String getType() {
-        return type
+        type
     }
 
     void setType(String type) {
@@ -52,7 +52,7 @@ class Post {
     }
 
     String getTitle() {
-        return title
+        title
     }
 
     void setTitle(String title) {
@@ -60,7 +60,7 @@ class Post {
     }
 
     String getBody() {
-        return body
+        body
     }
 
     void setBody(String body) {
@@ -68,7 +68,7 @@ class Post {
     }
 
     String getDate() {
-        return date
+        date
     }
 
     void setDate(String date) {

@@ -48,7 +48,7 @@ class JestClientService implements Serializable {
             this.client = factory.getObject()
         }
 
-        return this.client;
+        this.client;
 
     }
 

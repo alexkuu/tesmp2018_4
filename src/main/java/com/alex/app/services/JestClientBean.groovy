@@ -12,6 +12,6 @@ class JestClientBean {
 
     @Bean
     JestClient client() {
-        return jestClientService.getClient()
+        jestClientService.getClient()
     }
 }

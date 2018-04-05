@@ -17,53 +17,53 @@ class ElasticSearchController {
 
     @RequestMapping("/deleteall")
     String deleteAll() {
-        return repository.deleteAll()
+        repository.deleteAll()
     }
 
     @RequestMapping("/getaliases")
     String getAliases() {
-        return repository.getAliases()
+        repository.getAliases()
     }
 
     @RequestMapping("/getall")
     String getAll() {
-        return repository.getAll()
+        repository.getAll()
     }
 
     @RequestMapping("indexexist/{name}")
     String checkIndexExist(@PathVariable String name) {
-        return "Index " + name + " exists: " + repository.indexExist(name)
+        "Index " + name + " exists: " + repository.indexExist(name)
     }
 
     @RequestMapping("delete/index/{name}")
     String deleteIndexByName(@PathVariable String name) {
-        return repository.deleteIndexByName(name)
+        repository.deleteIndexByName(name)
     }
 
     @RequestMapping("create/index/{name}")
     String createIndex(@PathVariable String name) {
-        return repository.createIndex(name)
+        repository.createIndex(name)
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/putpost")
     String putPost(@RequestBody Post post) {
-        return repository.putPost(post)
+        repository.putPost(post)
     }
 
     @RequestMapping("search/{index}/{type}")
     String searchPostsInIndex(@PathVariable String index, @PathVariable String type) {
-        return repository.getPosts(index, type)
+        repository.getPosts(index, type)
     }
 
     @RequestMapping("count/{index}/{type}")
     String countPostsInIndex(@PathVariable String index, @PathVariable String type) {
-        return repository.getCount(index, type)
+        repository.getCount(index, type)
     }
 
     @RequestMapping("getaggregation/{index}/{type}/{field}")
     String getAggregationJsonByField(
             @PathVariable String index, @PathVariable String type, @PathVariable String field) {
-        return repository.getAggregationJsonByField(index, type, field)
+        repository.getAggregationJsonByField(index, type, field)
     }
 
 }

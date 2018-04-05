@@ -38,7 +38,7 @@ class HttpClient {
         ResponseEntity<String> responseEntity = rest.exchange(server + uri, HttpMethod.GET, requestEntity, String.class)
         this.setStatus(responseEntity.getStatusCode())
         this.setResponse(responseEntity.getBody())
-        return responseEntity.getBody()
+        responseEntity.getBody()
     }
 
     public String post(String uri, String json) {
@@ -46,11 +46,11 @@ class HttpClient {
         ResponseEntity<String> responseEntity = rest.exchange(server + uri, HttpMethod.POST, requestEntity, String.class)
         this.setStatus(responseEntity.getStatusCode())
         this.setResponse(responseEntity.getBody())
-        return responseEntity.getBody()
+        responseEntity.getBody()
     }
 
     String getResponse() {
-        return response
+        response
     }
 
     private void setResponse(String response) {
@@ -58,7 +58,7 @@ class HttpClient {
     }
 
     HttpStatus getStatus() {
-        return status
+        status
     }
 
     void setStatus(HttpStatus status) {
@@ -67,6 +67,6 @@ class HttpClient {
 
     @Bean
     static PropertySourcesPlaceholderConfigurer propertyConfigInDev() {
-        return new PropertySourcesPlaceholderConfigurer()
+        new PropertySourcesPlaceholderConfigurer()
     }
 }
