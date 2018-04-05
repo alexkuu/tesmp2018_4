@@ -27,7 +27,7 @@ repositories {
 dependencies {
     compile 'org.codehaus.groovy:groovy:2.3.11'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-parent', version: '2.0.0.RELEASE', ext: 'pom'
-    compile("org.springframework.boot:spring-boot-starter-web")
+    compile 'org.springframework.boot:spring-boot-starter-web'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-elasticsearch', version: '2.0.0.RELEASE'
     compile 'io.searchbox:jest:2.0.4'
     compile 'io.gsonfire:gson-fire:1.8.2'
