@@ -1,4 +1,4 @@
-# Simple example of Spring Boot 2 + Groovy for creating service elsticsearch service and testing it with TestNG
+# Simple example of Spring Boot 2 + Groovy for creating REST service for elsticsearch and testing it with TestNG
 
 ## Getting Started
 
