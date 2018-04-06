@@ -4,12 +4,7 @@ import com.alex.app.entities.Post
 import com.alex.app.services.Logger
 import io.searchbox.client.JestClient
 import io.searchbox.client.JestResult
-import io.searchbox.core.Bulk
-import io.searchbox.core.BulkResult
-import io.searchbox.core.Count
-import io.searchbox.core.Delete
-import io.searchbox.core.Index
-import io.searchbox.core.Search
+import io.searchbox.core.*
 import io.searchbox.indices.CreateIndex
 import io.searchbox.indices.IndicesExists
 import io.searchbox.indices.aliases.GetAliases

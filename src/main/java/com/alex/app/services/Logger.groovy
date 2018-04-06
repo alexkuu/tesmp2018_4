@@ -1,7 +1,7 @@
 package com.alex.app.services
 
+import org.apache.log4j.Level
 import org.springframework.stereotype.Service
-import org.apache.log4j.Level;
 
 @Service
 class Logger {
