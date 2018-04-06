@@ -1,11 +1,11 @@
-package com.alex.app.loader
+package com.angrybambr.example.app.loader
 
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.ComponentScan
 
-@ComponentScan(basePackages = "com.alex.app")
+@ComponentScan(basePackages = "com.angrybambr.example.app")
 @EnableAutoConfiguration
 @SpringBootApplication
 class App {

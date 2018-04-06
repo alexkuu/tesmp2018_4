@@ -1,4 +1,4 @@
-package com.alex.app.services
+package com.angrybambr.example.app.services
 
 
 import com.google.gson.Gson

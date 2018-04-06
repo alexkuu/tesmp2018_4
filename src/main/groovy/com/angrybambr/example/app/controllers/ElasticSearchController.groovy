@@ -1,7 +1,7 @@
-package com.alex.app.controllers
+package com.angrybambr.example.app.controllers
 
-import com.alex.app.entities.Post
-import com.alex.app.repository.Repository
+import com.angrybambr.example.app.entities.Post
+import com.angrybambr.example.app.repository.Repository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 

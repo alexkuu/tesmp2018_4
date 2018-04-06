@@ -1,4 +1,4 @@
-package com.alex.app.services
+package com.angrybambr.example.app.services
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.env.Environment

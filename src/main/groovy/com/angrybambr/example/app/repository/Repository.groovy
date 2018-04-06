@@ -1,7 +1,7 @@
-package com.alex.app.repository
+package com.angrybambr.example.app.repository
 
-import com.alex.app.entities.Post
-import com.alex.app.services.Logger
+import com.angrybambr.example.app.entities.Post
+import com.angrybambr.example.app.services.Logger
 import io.searchbox.client.JestClient
 import io.searchbox.client.JestResult
 import io.searchbox.core.*

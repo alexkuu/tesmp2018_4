@@ -1,4 +1,4 @@
-package com.alex.app.entities
+package com.angrybambr.example.app.entities
 
 import com.google.gson.JsonObject
 

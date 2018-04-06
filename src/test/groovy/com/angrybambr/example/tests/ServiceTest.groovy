@@ -1,10 +1,10 @@
-package com.alex
+package com.angrybambr.example.tests
 
-import com.alex.app.loader.App
-import com.alex.app.services.HttpClient
-import com.alex.app.services.Logger
+import com.angrybambr.example.app.entities.Post
+import com.angrybambr.example.app.loader.App
+import com.angrybambr.example.app.repository.Repository
+import com.angrybambr.example.app.services.Logger
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.gson.JsonObject
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests
@@ -14,99 +14,93 @@ import org.testng.annotations.Test
 import java.util.concurrent.ThreadLocalRandom
 
 @SpringBootTest(classes = App, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-class ApiTests extends AbstractTestNGSpringContextTests {
-
-    @Autowired
-    HttpClient httpClient
+class ServiceTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
     Logger log
+
+    @Autowired
+    Repository repository
 
     private final String INDEX_NAME = "TestIndex".toLowerCase()
 
     @Test(description = "Delete all test")
     void deleteAllTest() {
         log.info("Delete all test")
-        String deleteResp = httpClient.get("deleteall")
+        String deleteResp = repository.deleteAll()
         log.info(deleteResp)
         Assert.assertEquals(deleteResp, "We've deleted everything :(")
     }
 
     @Test(description = "Create index test")
     void createIndexTest() {
-        httpClient.get("deleteall")
+        repository.deleteAll()
         log.info("Create index test")
-        String resp = httpClient.get("create/index/" + INDEX_NAME)
+        String resp = repository.createIndex(INDEX_NAME)
         log.info(resp)
         Assert.assertEquals(resp, "Index " + INDEX_NAME + " created")
-        httpClient.get("deleteall")
+        repository.deleteAll()
     }
 
     @Test(description = "Negative create index test")
     void createIndexNegativeTest() {
-        httpClient.get("deleteall")
+        repository.deleteAll()
         log.info("Negative create index test")
-        String resp = httpClient.get("create/index/" + INDEX_NAME.toUpperCase())
+        String resp = repository.createIndex(INDEX_NAME.toUpperCase())
         log.info(resp)
         Assert.assertEquals(resp, "\"InvalidIndexNameException[[" + INDEX_NAME.toUpperCase() + "] Invalid index name [" + INDEX_NAME.toUpperCase() + "], must be lowercase]\"")
     }
 
     @Test(description = "Create index which already exist")
     void createExistingIndexTest() {
-        httpClient.get("deleteall")
+        repository.deleteAll()
         log.info("Create index which already exist")
-        String resp = httpClient.get("create/index/" + INDEX_NAME)
+        String resp = repository.createIndex(INDEX_NAME)
         log.info(resp)
-        resp = httpClient.get("create/index/" + INDEX_NAME)
+        resp = repository.createIndex(INDEX_NAME)
         log.info(resp)
         Assert.assertEquals(resp, "Index " + INDEX_NAME + " already exist")
-        httpClient.get("deleteall")
+        repository.deleteAll()
     }
 
     @Test(description = "Check index exist test")
     void checkIndexExistTest() {
-        httpClient.get("deleteall")
+        repository.deleteAll()
         log.info("Check index exist test")
-        String resp = httpClient.get("indexexist/" + INDEX_NAME)
-        log.info(resp)
-        Assert.assertEquals(resp, "Index " + INDEX_NAME + " exists: false")
-        resp = httpClient.get("create/index/" + INDEX_NAME)
-        log.info(resp)
-        Assert.assertEquals(resp, "Index " + INDEX_NAME + " created")
-        resp = httpClient.get("indexexist/" + INDEX_NAME)
-        log.info(resp)
-        Assert.assertEquals(resp, "Index " + INDEX_NAME + " exists: true")
-        httpClient.get("deleteall")
+        boolean resp = repository.indexExist(INDEX_NAME)
+        log.info("Index exists: " + resp)
+        Assert.assertFalse(resp)
+        String createResp = repository.createIndex(INDEX_NAME)
+        log.info(createResp)
+        Assert.assertEquals(createResp, "Index " + INDEX_NAME + " created")
+        resp = repository.indexExist(INDEX_NAME)
+        log.info("Index exists: " + resp)
+        Assert.assertTrue(resp)
+        repository.deleteAll()
     }
 
     @Test(description = "Put post")
     void putPostTest() {
-        httpClient.get("deleteall")
+        repository.deleteAll()
         log.info("Put post test")
         String type = "post"
         String title = "Test Post"
         String body = "Test post body. Body of the test post"
         String date = "01-02-2005"
-        JsonObject object = new JsonObject();
-        object.addProperty("index", INDEX_NAME)
-        object.addProperty("type", type)
-        object.addProperty("title", title)
-        object.addProperty("body", body)
-        object.addProperty("date", date)
-        log.info(object.toString())
-        String resp = httpClient.post("putpost", object.toString())
+        Post post = new Post(INDEX_NAME, type, title, body, date)
+        String resp = repository.putPost(post)
         log.info(resp)
         Assert.assertTrue(resp.contains("\"errors\":false"))
         Assert.assertTrue(resp.contains("\"_index\":\"" + INDEX_NAME + "\""))
         Assert.assertTrue(resp.contains("\"_type\":\"" + type + "\""))
         Assert.assertTrue(resp.contains("\"_version\":1"))
         Assert.assertTrue(resp.contains("\"status\":201"))
-        httpClient.get("deleteall")
+        repository.deleteAll()
     }
 
     @Test(description = "Aggr doc_count test")
     void docCountTest() {
-        httpClient.get("deleteall")
+        repository.deleteAll()
         log.info("Aggr doc_count test")
         int minCount = 1;
         int maxCount = 20;
@@ -120,44 +114,25 @@ class ApiTests extends AbstractTestNGSpringContextTests {
         int secondRandom = ThreadLocalRandom.current().nextInt(minCount, maxCount + 1)
         int thirdRandom = ThreadLocalRandom.current().nextInt(minCount, maxCount + 1)
         for (int i = 0; i < fisrtRandom; i++) {
-            JsonObject object = new JsonObject();
-            object.addProperty("index", INDEX_NAME)
-            object.addProperty("type", type)
-            object.addProperty("title", firstTitle)
-            object.addProperty("body", body + i)
-            object.addProperty("date", date + i)
-            log.info(object.toString())
-            String resp = httpClient.post("putpost", object.toString())
+            Post post = new Post(INDEX_NAME, type, firstTitle, body + i, date + i)
+            String resp = repository.putPost(post)
             log.info(resp)
         }
 
         for (int i = 0; i < secondRandom; i++) {
-            JsonObject object = new JsonObject();
-            object.addProperty("index", INDEX_NAME)
-            object.addProperty("type", type)
-            object.addProperty("title", secondTitle)
-            object.addProperty("body", body + i)
-            object.addProperty("date", date + i)
-            log.info(object.toString())
-            String resp = httpClient.post("putpost", object.toString())
+            Post post = new Post(INDEX_NAME, type, secondTitle, body + i, date + i)
+            String resp = repository.putPost(post)
             log.info(resp)
         }
 
         for (int i = 0; i < thirdRandom; i++) {
-            JsonObject object = new JsonObject();
-            object.addProperty("index", INDEX_NAME)
-            object.addProperty("type", type)
-            object.addProperty("title", thirdTitle)
-            object.addProperty("body", body + i)
-            object.addProperty("date", date + i)
-            log.info(object.toString())
-            String resp = httpClient.post("putpost", object.toString())
+            Post post = new Post(INDEX_NAME, type, thirdTitle, body + i, date + i)
+            String resp = repository.putPost(post)
             log.info(resp)
         }
         Thread.sleep(5000)
         String request = "getaggregation/" + INDEX_NAME + "/" + type + "/title"
-        log.info("Request: [" + request + "]")
-        String response = httpClient.get(request)
+        String response = repository.getAggregationJsonByField(INDEX_NAME, type, "title")
         HashMap<String, HashMap<String, Object>> result =
                 new ObjectMapper().readValue(response, HashMap.class)
         HashMap<String, Object> allFields = result.get("all_title")
@@ -172,7 +147,8 @@ class ApiTests extends AbstractTestNGSpringContextTests {
                 Assert.assertEquals(bucket.get("doc_count"), thirdRandom)
             }
         }
-        httpClient.get("deleteall")
+        repository.deleteAll()
     }
+
 
 }

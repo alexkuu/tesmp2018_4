@@ -1,4 +1,4 @@
-package com.alex.app.services
+package com.angrybambr.example.app.services
 
 import io.searchbox.client.JestClient
 import org.springframework.beans.factory.annotation.Autowired
