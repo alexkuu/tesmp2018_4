@@ -22,6 +22,8 @@ class ServiceTest extends AbstractTestNGSpringContextTests {
     @Autowired
     Repository repository
 
+    private final String INDEX_NAME = "TestIndex".toLowerCase()
+
     @Test(description = "Delete all test")
     void deleteAllTest() {
         log.info("Delete all test")
@@ -34,10 +36,9 @@ class ServiceTest extends AbstractTestNGSpringContextTests {
     void createIndexTest() {
         repository.deleteAll()
         log.info("Create index test")
-        String indexName = "alextest"
-        String resp = repository.createIndex(indexName)
+        String resp = repository.createIndex(INDEX_NAME)
         log.info(resp)
-        Assert.assertEquals(resp, "Index " + indexName + " created")
+        Assert.assertEquals(resp, "Index " + INDEX_NAME + " created")
         repository.deleteAll()
     }
 
@@ -45,22 +46,20 @@ class ServiceTest extends AbstractTestNGSpringContextTests {
     void createIndexNegativeTest() {
         repository.deleteAll()
         log.info("Negative create index test")
-        String indexName = "AlexTest"
-        String resp = repository.createIndex(indexName)
+        String resp = repository.createIndex(INDEX_NAME.toUpperCase())
         log.info(resp)
-        Assert.assertEquals(resp, "\"InvalidIndexNameException[[" + indexName + "] Invalid index name [" + indexName + "], must be lowercase]\"")
+        Assert.assertEquals(resp, "\"InvalidIndexNameException[[" + INDEX_NAME.toUpperCase() + "] Invalid index name [" + INDEX_NAME.toUpperCase() + "], must be lowercase]\"")
     }
 
     @Test(description = "Create index which already exist")
     void createExistingIndexTest() {
         repository.deleteAll()
         log.info("Create index which already exist")
-        String indexName = "alextest"
-        String resp = repository.createIndex(indexName)
+        String resp = repository.createIndex(INDEX_NAME)
         log.info(resp)
-        resp = repository.createIndex(indexName)
+        resp = repository.createIndex(INDEX_NAME)
         log.info(resp)
-        Assert.assertEquals(resp, "Index " + indexName + " already exist")
+        Assert.assertEquals(resp, "Index " + INDEX_NAME + " already exist")
         repository.deleteAll()
     }
 
@@ -68,14 +67,13 @@ class ServiceTest extends AbstractTestNGSpringContextTests {
     void checkIndexExistTest() {
         repository.deleteAll()
         log.info("Check index exist test")
-        String indexName = "alextest"
-        boolean resp = repository.indexExist(indexName)
+        boolean resp = repository.indexExist(INDEX_NAME)
         log.info("Index exists: " + resp)
         Assert.assertFalse(resp)
-        String createResp = repository.createIndex(indexName)
+        String createResp = repository.createIndex(INDEX_NAME)
         log.info(createResp)
-        Assert.assertEquals(createResp, "Index " + indexName + " created")
-        resp = repository.indexExist(indexName)
+        Assert.assertEquals(createResp, "Index " + INDEX_NAME + " created")
+        resp = repository.indexExist(INDEX_NAME)
         log.info("Index exists: " + resp)
         Assert.assertTrue(resp)
         repository.deleteAll()
@@ -85,16 +83,15 @@ class ServiceTest extends AbstractTestNGSpringContextTests {
     void putPostTest() {
         repository.deleteAll()
         log.info("Put post test")
-        String indexName = "alextest"
         String type = "post"
         String title = "Test Post"
         String body = "Test post body. Body of the test post"
         String date = "01-02-2005"
-        Post post = new Post(indexName, type, title, body, date)
+        Post post = new Post(INDEX_NAME, type, title, body, date)
         String resp = repository.putPost(post)
         log.info(resp)
         Assert.assertTrue(resp.contains("\"errors\":false"))
-        Assert.assertTrue(resp.contains("\"_index\":\"" + indexName + "\""))
+        Assert.assertTrue(resp.contains("\"_index\":\"" + INDEX_NAME + "\""))
         Assert.assertTrue(resp.contains("\"_type\":\"" + type + "\""))
         Assert.assertTrue(resp.contains("\"_version\":1"))
         Assert.assertTrue(resp.contains("\"status\":201"))
@@ -107,7 +104,6 @@ class ServiceTest extends AbstractTestNGSpringContextTests {
         log.info("Aggr doc_count test")
         int minCount = 1;
         int maxCount = 20;
-        String index = "alextest"
         String type = "post"
         String firstTitle = "Music"
         String secondTitle = "Movie"
@@ -118,25 +114,25 @@ class ServiceTest extends AbstractTestNGSpringContextTests {
         int secondRandom = ThreadLocalRandom.current().nextInt(minCount, maxCount + 1)
         int thirdRandom = ThreadLocalRandom.current().nextInt(minCount, maxCount + 1)
         for (int i = 0; i < fisrtRandom; i++) {
-            Post post = new Post(index, type, firstTitle, body + i, date + i)
+            Post post = new Post(INDEX_NAME, type, firstTitle, body + i, date + i)
             String resp = repository.putPost(post)
             log.info(resp)
         }
 
         for (int i = 0; i < secondRandom; i++) {
-            Post post = new Post(index, type, secondTitle, body + i, date + i)
+            Post post = new Post(INDEX_NAME, type, secondTitle, body + i, date + i)
             String resp = repository.putPost(post)
             log.info(resp)
         }
 
         for (int i = 0; i < thirdRandom; i++) {
-            Post post = new Post(index, type, thirdTitle, body + i, date + i)
+            Post post = new Post(INDEX_NAME, type, thirdTitle, body + i, date + i)
             String resp = repository.putPost(post)
             log.info(resp)
         }
         Thread.sleep(5000)
-        String request = "getaggregation/" + index + "/" + type + "/title"
-        String response = repository.getAggregationJsonByField(index, type, "title")
+        String request = "getaggregation/" + INDEX_NAME + "/" + type + "/title"
+        String response = repository.getAggregationJsonByField(INDEX_NAME, type, "title")
         HashMap<String, HashMap<String, Object>> result =
                 new ObjectMapper().readValue(response, HashMap.class)
         HashMap<String, Object> allFields = result.get("all_title")

@@ -1,8 +1,7 @@
 package com.alex.app.services
 
-
-import org.springframework.context.annotation.Bean
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.core.env.Environment
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
@@ -14,13 +13,13 @@ import org.springframework.stereotype.Service
 @Service
 class HttpClient {
 
-//    private @Value('${host}')
-    String host = "localhost"
+    @Autowired
+    Environment environment
 
-//    private @Value('${port}')
-    String port = "8080"
+    String host
+    String port
 
-    private String server = "http://" + host + ":" + port
+    private String server
     private RestTemplate rest
     private HttpHeaders headers
     private HttpStatus status
@@ -33,7 +32,14 @@ class HttpClient {
         headers.add("Accept", "*/*")
     }
 
-    public String get(String uri) {
+    private void setProperties() {
+        this.host = environment.getProperty("server.address")
+        this.port = environment.getProperty("server.port")
+        this.server = "http://" + this.host + ":" + this.port
+    }
+
+    String get(String uri) {
+        if (server == null) setProperties()
         HttpEntity<String> requestEntity = new HttpEntity<String>("", headers)
         ResponseEntity<String> responseEntity = rest.exchange(server + uri, HttpMethod.GET, requestEntity, String.class)
         this.setStatus(responseEntity.getStatusCode())
@@ -41,7 +47,8 @@ class HttpClient {
         responseEntity.getBody()
     }
 
-    public String post(String uri, String json) {
+    String post(String uri, String json) {
+        if (server == null) setProperties()
         HttpEntity<String> requestEntity = new HttpEntity<String>(json, headers)
         ResponseEntity<String> responseEntity = rest.exchange(server + uri, HttpMethod.POST, requestEntity, String.class)
         this.setStatus(responseEntity.getStatusCode())
@@ -65,8 +72,4 @@ class HttpClient {
         this.status = status
     }
 
-    @Bean
-    static PropertySourcesPlaceholderConfigurer propertyConfigInDev() {
-        new PropertySourcesPlaceholderConfigurer()
-    }
 }
